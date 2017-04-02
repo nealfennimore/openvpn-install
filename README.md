@@ -16,3 +16,44 @@ You can get a little VPS for just $2.99/month at [Bandwagon Host](https://bandwa
 ### Donations
 
 If you want to show your appreciation, you can donate via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBAYDL34Z7J6L) or [Bitcoin](https://pastebin.com/raw/M2JJpQpC). Thanks!
+
+### Enable with UFW
+
+This tutorial will use OpenVPN over UDP, so ufw must also allow UDP traffic over port 1194. [Set this to your preferred port]
+
+ufw allow 1194/udp
+The ufw forwarding policy needs to be set as well. We'll do this in ufw's primary configuration file.
+
+vim /etc/default/ufw
+Look for DEFAULT_FORWARD_POLICY="DROP". This must be changed from DROP to ACCEPT. It should look like this when done:
+
+DEFAULT_FORWARD_POLICY="ACCEPT"
+Next we will add additional ufw rules for network address translation and IP masquerading of connected clients.
+
+vim /etc/ufw/before.rules
+Add the lines between # START OPENVPN RULES and # END OPENVPN RULES to make the top of your before.rules file look like below.
+
+#
+# rules.before
+#
+# Rules that should be run before the ufw command line added rules. Custom
+# rules should be added to one of these chains:
+#   ufw-before-input
+#   ufw-before-output
+#   ufw-before-forward
+#
+
+# START OPENVPN RULES
+# NAT table rules
+*nat
+:POSTROUTING ACCEPT [0:0] 
+# Allow traffic from OpenVPN client to eth0
+-A POSTROUTING -s 10.8.0.0/8 -o eth0 -j MASQUERADE
+COMMIT
+# END OPENVPN RULES
+
+# Don't delete these required lines, otherwise there will be errors
+*filter
+With the changes made to ufw, we can now enable it. Enter into the command prompt:
+
+ufw reload
