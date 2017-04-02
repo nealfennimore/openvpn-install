@@ -1,36 +1,41 @@
-## openvpn-install
+# openvpn-install
 OpenVPN [road warrior](http://en.wikipedia.org/wiki/Road_warrior_%28computing%29) installer for Debian, Ubuntu and CentOS.
 
 This script will let you setup your own VPN server in no more than a minute, even if you haven't used OpenVPN before. It has been designed to be as unobtrusive and universal as possible.
 
-### Installation
+## Installation
 Run the script and follow the assistant:
 
 `wget https://git.io/vpn -O openvpn-install.sh && bash openvpn-install.sh`
 
 Once it ends, you can run it again to add more users, remove some of them or even completely uninstall OpenVPN.
 
-### I want to run my own VPN but don't have a server for that
+## I want to run my own VPN but don't have a server for that
 You can get a little VPS for just $2.99/month at [Bandwagon Host](https://bandwagonhost.com/aff.php?aff=575&pid=12).
 
-### Donations
+## Donations
 
 If you want to show your appreciation, you can donate via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBAYDL34Z7J6L) or [Bitcoin](https://pastebin.com/raw/M2JJpQpC). Thanks!
 
-### Enable with UFW
+# Enable with UFW
 
-This tutorial will use OpenVPN over UDP, so ufw must also allow UDP traffic over port 1194. [Set this to your preferred port]
+This tutorial will use OpenVPN over UDP, so ufw must also allow UDP traffic over port 1194.
+```sh
+ufw allow 1194/udp
+```
 
-`ufw allow 1194/udp`
 The ufw forwarding policy needs to be set as well. We'll do this in ufw's primary configuration file.
 
-`vim /etc/default/ufw`
-Look for DEFAULT_FORWARD_POLICY="DROP". This must be changed from DROP to ACCEPT. It should look like this when done:
+```sh
+vim /etc/default/ufw
+```
 
-`DEFAULT_FORWARD_POLICY="ACCEPT"`
+Look for DEFAULT_FORWARD_POLICY="DROP". This must be changed from DROP to ACCEPT. It should look like this when done: `DEFAULT_FORWARD_POLICY="ACCEPT"`
+
 Next we will add additional ufw rules for network address translation and IP masquerading of connected clients.
-
-`vim /etc/ufw/before.rules`
+```sh
+vim /etc/ufw/before.rules
+```
 Add the lines between # START OPENVPN RULES and # END OPENVPN RULES to make the top of your before.rules file look like below.
 
 ```sh
@@ -58,4 +63,6 @@ COMMIT
 ```
 
 With the changes made to ufw, we can now enable it. Enter into the command prompt:
-`ufw reload`
+```sh
+ufw reload
+```
