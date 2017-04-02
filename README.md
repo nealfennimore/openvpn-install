@@ -21,18 +21,19 @@ If you want to show your appreciation, you can donate via [PayPal](https://www.p
 
 This tutorial will use OpenVPN over UDP, so ufw must also allow UDP traffic over port 1194. [Set this to your preferred port]
 
-ufw allow 1194/udp
+`ufw allow 1194/udp`
 The ufw forwarding policy needs to be set as well. We'll do this in ufw's primary configuration file.
 
-vim /etc/default/ufw
+`vim /etc/default/ufw`
 Look for DEFAULT_FORWARD_POLICY="DROP". This must be changed from DROP to ACCEPT. It should look like this when done:
 
-DEFAULT_FORWARD_POLICY="ACCEPT"
+`DEFAULT_FORWARD_POLICY="ACCEPT"`
 Next we will add additional ufw rules for network address translation and IP masquerading of connected clients.
 
-vim /etc/ufw/before.rules
+`vim /etc/ufw/before.rules`
 Add the lines between # START OPENVPN RULES and # END OPENVPN RULES to make the top of your before.rules file look like below.
 
+```sh
 #
 # rules.before
 #
@@ -54,6 +55,7 @@ COMMIT
 
 # Don't delete these required lines, otherwise there will be errors
 *filter
-With the changes made to ufw, we can now enable it. Enter into the command prompt:
+```
 
-ufw reload
+With the changes made to ufw, we can now enable it. Enter into the command prompt:
+`ufw reload`
